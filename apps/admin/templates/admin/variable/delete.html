@@ -1,0 +1,15 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Variable Delete' %}{% endblock title %}
+{% block container %}
+    <h2>{% trans 'Delete' %} {{ variable }}</h2>
+    {% load crispy_forms_tags %}
+    <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-actions">
+            <input type="submit" class="btn btn-danger" value="{% trans 'Delete' %}" />
+            <a type="button" class="btn" href="{% url 'admin_variable_list' %}">{% trans 'Cancel' %}</a>
+        </div>
+    </form>
+{% endblock container %}

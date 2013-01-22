@@ -1,0 +1,14 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Station Create' %}{% endblock title %}
+{% block container %}
+    {% load crispy_forms_tags %}
+    <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
+            <a type="button" class="btn" href="{% url 'admin_station_list' %}">{% trans 'Cancel' %}</a>
+        </div>
+    </form>
+{% endblock container %}

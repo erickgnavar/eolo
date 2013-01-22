@@ -1,0 +1,23 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Measurement Create' %}{% endblock title %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.10.0.custom.min.css" />
+{% endblock extrastyle %}
+{% block container %}
+    {% load crispy_forms_tags %}
+    <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
+            <a type="button" class="btn" href="{% url 'admin_measurement_list' %}">{% trans 'Cancel' %}</a>
+        </div>
+    </form>
+{% endblock container %}
+{% block bottom_script %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.0.custom.min.js"></script>
+    <script type="text/javascript">
+        $('.datepicker').datepicker();
+    </script>
+{% endblock bottom_script %}

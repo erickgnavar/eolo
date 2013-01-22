@@ -1,0 +1,21 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Filter Edit' %}{% endblock title %}
+{% block container %}
+    <div class="page-header">
+        <div class="tools">
+        <a href="{% url 'admin_filter_delete' filter.id %}" class="btn btn-danger pull-right">
+        <i class="icon-remove icon-white"></i> {% trans 'Delete this filter' %}</a>
+        </div>
+        <h2>{% trans 'Measurement' %} &raquo {{ measurement }}</h2>
+    </div>
+    {% load crispy_forms_tags %}
+    <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
+            <a type="button" class="btn" href="{% url 'admin_filter_list' %}">{% trans 'Cancel' %}</a>
+        </div>
+    </form>
+{% endblock container %}

@@ -1,0 +1,31 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Variables' %}{% endblock title %}
+{% block container %}
+    <div class="page-header">
+        <div class="tools">
+            <a href="{% url 'admin_variable_create' %}" class="btn btn-success pull-right">
+            <i class="icon-plus icon-white"></i> {% trans 'New Variable' %}
+            </a>
+        </div>
+        <h2>{%  trans 'Variables' %}</h2>
+    </div>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{% trans 'Name' %}</th>
+                <th>{% trans 'Code' %}</th>
+                <th>{% trans 'Options' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for variable in variables %}
+            <tr>
+                <td>{{ variable.name }}</td>
+                <td>{{ variable.code }}</td>
+                <td><a href="{% url 'admin_variable_edit' variable.id %}">{% trans 'Edit' %}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock container %}

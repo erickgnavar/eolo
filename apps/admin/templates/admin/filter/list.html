@@ -1,0 +1,29 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Filters' %}{% endblock title %}
+{% block container %}
+    <div class="page-header">
+        <div class="tools">
+            <a href="{% url 'admin_filter_create' %}" class="btn btn-success pull-right">
+            <i class="icon-plus icon-white"></i> {% trans 'New Filter' %}
+            </a>
+        </div>
+        <h2>{%  trans 'Filters' %}</h2>
+    </div>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{% trans 'Value' %}</th>
+                <th>{% trans 'Options' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for filter in filters %}
+            <tr>
+                <td>{{ filter.value }}</td>
+                <td><a href="{% url 'admin_filter_edit' filter.id %}">{% trans 'Edit' %}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock container %}

@@ -1,0 +1,56 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block title %}{% trans 'Measurements' %}{% endblock title %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.10.0.custom.min.css" />
+{% endblock extrastyle %}
+{% block container %}
+    <div class="page-header">
+        <form method="get" action="" class="form-horizontal well well-small search-form">
+            <div class="row-fluid">
+                {{ search_form|crispy }}
+                <div class="form-actions">
+                    <input type="submit" class="btn" value="{% trans 'Search' %}">
+                </div>
+            </div>
+        </form>
+        <div class="tools">
+            <a href="{% url 'admin_measurement_create' %}" class="btn btn-success pull-right">
+            <i class="icon-plus icon-white"></i> {% trans 'New Measurement' %}
+            </a>
+        </div>
+        <h2>{%  trans 'Measurements' %}</h2>
+    </div>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{% trans 'Variable' %}</th>
+                <th>{% trans 'Value' %}</th>
+                <th>{% trans 'Station' %}</th>
+                <th>{% trans 'Date' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for measurement in measurements %}
+            <tr>
+                <td>{{ measurement.variable }}</td>
+                <td>{{ measurement.value }}</td>
+                <td>{{ measurement.station }}</td>
+                <td>{{ measurement.date }}</td>
+                <td><a href="{% url 'admin_measurement_edit' measurement.id %}">{% trans 'Edit' %}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include 'common/pagination.html' %}
+{% endblock container %}
+{% block bottom_script %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.0.custom.min.js"></script>
+    <script type="text/javascript">
+        $.datepicker.setDefaults({
+            dateFormat: 'yy-mm-dd'
+        });
+        $('.datepicker').datepicker();
+    </script>
+{% endblock bottom_script %}

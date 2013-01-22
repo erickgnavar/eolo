@@ -1,0 +1,33 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Users' %}{% endblock title %}
+{% block container %}
+    <div class="page-header">
+        <div class="tools">
+            <a href="{% url 'admin_user_create' %}" class="btn btn-success pull-right">
+            <i class="icon-plus icon-white"></i> {% trans 'New User' %}
+            </a>
+        </div>
+        <h2>{%  trans 'Users' %}</h2>
+    </div>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{% trans 'Full Name' %}</th>
+                <th>{% trans 'email' %}</th>
+                <th>{% trans 'Role' %}</th>
+                <th>{% trans 'Options' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.get_full_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role|lower|capfirst }}</td>
+                <td><a href="{% url 'admin_user_edit' user.id %}">{% trans 'Edit' %}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock container %}

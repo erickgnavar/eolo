@@ -1,0 +1,33 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Variables' %}{% endblock title %}
+{% block container %}
+    <div class="page-header">
+        <div class="tools">
+            <a href="{% url 'admin_station_create' %}" class="btn btn-success pull-right">
+            <i class="icon-plus icon-white"></i> {% trans 'New Station' %}
+            </a>
+        </div>
+        <h2>{%  trans 'Stations' %}</h2>
+    </div>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{% trans 'Name' %}</th>
+                <th>{% trans 'Code' %}</th>
+                <th>{% trans 'Region' %}</th>
+                <th>{% trans 'Options' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for station in stations %}
+            <tr>
+                <td>{{ station.name }}</td>
+                <td>{{ station.code }}</td>
+                <td>{{ station.region }}</td>
+                <td><a href="{% url 'admin_station_edit' station.id %}">{% trans 'Edit' %}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock container %}

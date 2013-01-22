@@ -1,0 +1,14 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Upload File' %}{% endblock title %}
+{% block container %}
+    {% load crispy_forms_tags %}
+    <form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="{% trans 'Upload' %}" />
+            <a type="button" class="btn" href="{% url 'admin_home' %}">{% trans 'Cancel' %}</a>
+        </div>
+    </form>
+{% endblock container %}

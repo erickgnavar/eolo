@@ -1,0 +1,49 @@
+{% load i18n %}
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" />
+    <title>{% block title %}{% endblock title %}</title>
+    {% block extrastyle %}{% endblock extrastyle %}
+</head>
+<body>
+    <div class="navbar navbar-static-top">
+        <div class="navbar-inner">
+            <a href="{% url 'admin_home' %}" class="brand">Eolo</a>
+            <ul class="nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        {% trans 'Manage' %}
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'admin_user_list' %}">{% trans 'Users' %}</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'admin_region_list' %}">{% trans 'Regions' %}</a></li>
+                        <li><a href="{% url 'admin_measurement_list' %}">{% trans 'Measurement' %}</a></li>
+                        <li><a href="{% url 'admin_variable_list' %}">{% trans 'Variables' %}</a></li>
+                        <li><a href="{% url 'admin_station_list' %}">{% trans 'Station' %}</a></li>
+                        <li><a href="{% url 'admin_filter_list' %}">{% trans 'Filter' %}</a></li>
+                    </ul>
+                    <li><a href="{% url 'upload_measurement_file' %}">{% trans 'Upload Measurement File' %}</a></li>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <section class="container">
+        <br>
+        <div class="row">
+            {% include 'common/messages.html' %}
+        </div>
+        <div class="row">
+            {% block container %}{% endblock container %}
+        </div>
+    </section>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    {% block bottom_script %}{% endblock bottom_script %}
+</body>
+</html>
