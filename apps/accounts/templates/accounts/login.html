@@ -1,0 +1,14 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+{% block title %}{% trans 'Login' %}{% endblock title %}
+{% block container %}
+	{% load crispy_forms_tags %}
+	<form action="" method="post" class="form-horizontal">
+		{% csrf_token %}
+		{{ form|crispy }}
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary">{% trans 'Start' %}</button>
+			<button type="button" class="btn">{% trans 'Cancel' %}</button>
+		</div>
+	</form>
+{% endblock container %}
