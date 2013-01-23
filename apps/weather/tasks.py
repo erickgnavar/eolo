@@ -6,7 +6,7 @@ from weather.models import Variable, Measurement, Filter
 from celery.decorators import task
 
 
-@task(name='inser_data')
+@task(name='insert_data')
 def insert_measurement(content, station):
     print 'Inserting data...'
     content = content.replace('\r', '')
@@ -54,13 +54,24 @@ def insert_measurement(content, station):
                     print 'saved'
                     measurements = []
     print '%d errors' % errors
+    print 'Insert done!'
+    validate_data.delay()
 
 
-# @task(name='validate_data')
-# def validate_data():
-#     print 'Valdating data'
-#     variables = Variable.objects.all()
-#     for variable in variables:
-#         measurements = Measurement.objects.filter(variable=variable).order_by('date')
-#         for measurement in measurements:
-            
+@task(name='validate_data')
+def validate_data():
+    print 'Validating data!'
+    variables = Variable.objects.all()
+    for variable in variables:
+        measurements = Measurement.objects.filter(variable=variable).order_by('date')
+        flag = True
+        i = 0
+        while flag:
+            if measurements[i].value != None:
+                flag = False
+            else:
+                i += 1
+        for measurement in measurements[:i]:
+            measurement.delete()
+        print 'variable %s done' % variable
+    print 'Validate done!'
