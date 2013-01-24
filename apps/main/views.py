@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
-from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
@@ -15,9 +14,6 @@ class HomeView(FormView):
     template_name = 'main/home.html'
     form_class = ConsultForm
 
-    def get_success_url(self):
-        return reverse('report')
-
     def form_valid(self, form):
         data = form.cleaned_data
         date = data['date']
@@ -25,6 +21,7 @@ class HomeView(FormView):
         variable = data['variable']
         qs = Measurement.objects.filter(variable=variable).exclude(value=None)
         values = []
+        ids = []
         # values before date selected
         for delta in range(-length, 0):
             delta_date = date + timedelta(days=delta)
@@ -34,6 +31,7 @@ class HomeView(FormView):
                 'date__lte': date
             }
             values += [measurement.value for measurement in qs.filter(**filters)]
+            ids += [measurement.id for measurement in qs.filter(**filters)]
         # values for date selecte before one year
         filters = {
             'date__day': date.day,
@@ -41,6 +39,7 @@ class HomeView(FormView):
             'date__lt': date + timedelta(days=-365)
         }
         values += [measurement.value for measurement in qs.filter(**filters)]
+        ids += [measurement.id for measurement in qs.filter(**filters)]
         # values above date selected
         for delta in range(1, length + 1):
             delta_date = date + timedelta(days=delta)
@@ -50,11 +49,14 @@ class HomeView(FormView):
                 'date__lte': date
             }
             values += [measurement.value for measurement in qs.filter(**filters)]
+            ids += [measurement.id for measurement in qs.filter(**filters)]
         values.sort()
+        ids.sort()
         context = {
-            'average': reduce(lambda x, y: x + y, values) / len(values)
+            'average': reduce(lambda x, y: x + y, values) / len(values),
+            'measurements': Measurement.objects.filter(id__in=ids)
         }
-        params = ['main/report.html', context, RequestContext(self.request)]
+        params = ('main/report.html', context, RequestContext(self.request))
         return render_to_response(*params)
 
 
