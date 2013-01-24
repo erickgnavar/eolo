@@ -1,0 +1,19 @@
+{% extends 'main/base.html' %}
+{% block container %}
+<table>
+    
+    <thead>
+        <th>date</th>
+        <th>variable</th>
+        <th>Valor</th>
+    </thead>
+    {% for measurement in measurements %}
+        <tr>
+            <td>{{ measurement.date }}</td>
+            <td>{{ measurement.variable }}</td>
+            <td>{{ measurement.value }}</td>
+        </tr>
+    {% endfor %}
+    promedio {{ average }}
+</table>
+{% endblock container %}

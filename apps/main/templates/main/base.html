@@ -1,0 +1,32 @@
+{% load i18n %}
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" />
+    <title>{% block title %}{% endblock title %}</title>
+    {% block extrastyle %}{% endblock extrastyle %}
+</head>
+<body>
+    <a href="https://github.com/erickxls/eolo"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+    <div class="navbar navbar-static-top">
+        <div class="navbar-inner">
+            <a href="/" class="brand">Eolo</a>
+        </div>
+    </div>
+    <section class="container">
+        <br>
+        <div class="row">
+            {% include 'common/messages.html' %}
+        </div>
+        <div class="row">
+            {% block container %}{% endblock container %}
+        </div>
+    </section>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    {% block bottom_script %}{% endblock bottom_script %}
+</body>
+</html>

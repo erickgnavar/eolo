@@ -106,6 +106,7 @@ TEMPLATE_DIRS = (
     path.join(PROJECT_ROOT, 'apps/admin/templates'),
     path.join(PROJECT_ROOT, 'apps/accounts/templates'),
     path.join(PROJECT_ROOT, 'apps/common/templates'),
+    path.join(PROJECT_ROOT, 'apps/main/templates'),
 )
 
 INSTALLED_APPS = (
@@ -116,6 +117,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'admin',
+    'main',
     'accounts',
     'weather',
     'common',
