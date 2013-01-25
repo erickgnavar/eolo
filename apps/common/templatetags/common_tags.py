@@ -27,3 +27,8 @@ def path_to_list(path):
             url = Path(name=path[i], url='/'.join(path[:i + 1]))
             urls.append(url)
     return urls
+
+
+@register.filter
+def to_pipes(value):
+    return '|' * len(value)
