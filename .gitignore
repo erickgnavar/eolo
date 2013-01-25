@@ -2,3 +2,4 @@
 .DS_Store
 *.db
 *.backup
+local_settigns.py
