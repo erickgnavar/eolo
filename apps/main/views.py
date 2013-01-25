@@ -7,7 +7,7 @@ from django.template import RequestContext
 
 from main.forms import ConsultForm
 from weather.models import Measurement
-from common.util import Stadistical
+# from common.util import Stadistical
 from decimal import Decimal
 
 
@@ -55,11 +55,11 @@ class HomeView(FormView):
         values.sort()
         ids.sort()
         # remove
-        print Stadistical.mode(values), Stadistical.median(values)
+        # print Stadistical.mode(values), Stadistical.median(values)
         context = {
-            'average': Stadistical.average(values),
-            'mode': Stadistical.mode(values),
-            'median': Stadistical.median(values),
+            # 'average': Stadistical.average(values),
+            # 'mode': Stadistical.mode(values),
+            # 'median': Stadistical.median(values),
             'measurements': Measurement.objects.filter(id__in=ids).order_by('date'),
             'data': prepare_data(values)
         }
