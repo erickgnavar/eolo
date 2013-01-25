@@ -2,4 +2,4 @@
 .DS_Store
 *.db
 *.backup
-local_settings.py
+eolo/settings/local_settings.py
