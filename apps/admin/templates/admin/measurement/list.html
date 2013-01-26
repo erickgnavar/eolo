@@ -51,6 +51,8 @@
         $.datepicker.setDefaults({
             dateFormat: 'yy-mm-dd'
         });
-        $('.datepicker').datepicker();
+        $('.datepicker').datepicker({
+            changeYear: true
+        });
     </script>
 {% endblock bottom_script %}

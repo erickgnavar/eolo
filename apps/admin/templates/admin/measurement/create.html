@@ -18,6 +18,8 @@
 {% block bottom_script %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.0.custom.min.js"></script>
     <script type="text/javascript">
-        $('.datepicker').datepicker();
+        $('.datepicker').datepicker({
+            changeYear: true
+        });
     </script>
 {% endblock bottom_script %}
