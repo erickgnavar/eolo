@@ -30,7 +30,7 @@
                 {% if interval.index == 1 %}
                     <td>[{{ interval.min }} : {{ interval.max }}]</td>    
                 {% else %}
-                    <td><{{ interval.min }} : {{ interval.max }}]</td>
+                    <td>&lt;{{ interval.min }} : {{ interval.max }}]</td>
                 {% endif %}
                 <td>
                 {{ interval.values|to_pipes }}
@@ -44,6 +44,12 @@
             {% endfor %}
         </tbody>
     </table>
+    <hr>
+    <div class="container">
+        <p>{% trans 'Average' %} {{ data.average }}</p>
+        <p>{% trans 'Median' %} {{ data.median }}</p>
+        <p>{% trans 'Mode' %} {{ data.mode }}</p>
+    </div>
     <hr>
     <table class="table table-bordered table-striped table-hover">
         <thead>

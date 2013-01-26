@@ -77,21 +77,23 @@ def prepare_data(values):
     import math
     length = len(values)
     quantity = int(round(1 + (3.3 * math.log(length))))
-    variation = (max(values) - min(values)) / Decimal(quantity)
+    amplitude = (max(values) - min(values)) / Decimal(quantity)
+    limit_decimal = 5
     data = {
         'length': length,
-        'intervals': []
+        'intervals': [],
+        'amplitude': amplitude
     }
     m = min(values)
     for i in range(quantity):
         interval = {
             'index': 0,
-            'min': m,
-            'max': m + variation,
+            'min': round(m, limit_decimal),
+            'max': round(m + amplitude, limit_decimal),
             'values': []
         }
         data['intervals'].append(interval)
-        m += variation
+        m += amplitude
     # insert first data
     min_value = min(values)
     for i in range(values.count(min_value)):
@@ -107,14 +109,51 @@ def prepare_data(values):
         interval['index'] = count
         interval['class_marker'] = (interval['max'] + interval['min']) / 2
         interval['fi'] = len(interval['values'])
-        interval['hi'] = float(interval['fi']) / float(data['length'])
+        interval['hi'] = round(float(interval['fi']) / float(data['length']), limit_decimal)
         interval['Fi'] = 0
         interval['Hi'] = 0
 
     data['intervals'][0]['Fi'] = data['intervals'][0]['fi']
-    data['intervals'][0]['Hi'] = data['intervals'][0]['hi']
+    data['intervals'][0]['Hi'] = round(data['intervals'][0]['hi'], limit_decimal)
     for i in range(1, quantity):
         data['intervals'][i]['Fi'] += data['intervals'][i - 1]['Fi'] + data['intervals'][i]['fi']
-        data['intervals'][i]['Hi'] += data['intervals'][i - 1]['Hi'] + data['intervals'][i]['hi']
+        data['intervals'][i]['Hi'] += round(data['intervals'][i - 1]['Hi'] + data['intervals'][i]['hi'], limit_decimal)
+
+    a = 0
+    modal_class_index = 0
+    b = 0
+    for interval in data['intervals']:
+        a += interval['fi'] * interval['class_marker']
+        if interval['fi'] > b:
+            b = interval['fi']
+            modal_class_index = interval['index'] - 1
+    # Median
+    median = data['intervals'][modal_class_index]['min']
+    if modal_class_index == 0:
+        before_value = data['intervals'][0]['Fi']
+    else:
+        before_value = data['intervals'][modal_class_index - 1]['Fi']
+
+    median += (((data['length'] / 2) - before_value) / data['intervals'][modal_class_index]['class_marker']) * float(data['amplitude'])
+    print data['amplitude']
+    # Median end
+    data['median'] = median
+    # Mode
+
+    # Mode end
+    # Average
+    data['average'] = round(a / length, limit_decimal)
+
+    if modal_class_index - 1 <= 0:
+        x = data['intervals'][modal_class_index]['fi'] - float(data['intervals'][modal_class_index]['min'])
+    else:
+        x = data['intervals'][modal_class_index]['fi'] - float(data['intervals'][modal_class_index - 1]['fi'])
+    if modal_class_index + 1 >= data['length']:
+        y = data['intervals'][modal_class_index]['fi'] - float(data['intervals'][modal_class_index]['max'])
+    else:
+        y = data['intervals'][modal_class_index]['fi'] - float(data['intervals'][modal_class_index + 1]['fi'])
+    mode = data['intervals'][modal_class_index]['min'] + ((x / (x + y)) * float(data['amplitude']))
+
+    data['mode'] = mode
 
     return data
