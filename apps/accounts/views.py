@@ -37,7 +37,7 @@ class LoginView(FormView):
     def get_success_url(self):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
-        return '/'
+        return reverse('admin_home')
 
 
 class LogoutView(RedirectView):
