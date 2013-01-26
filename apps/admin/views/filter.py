@@ -28,7 +28,7 @@ class FilterCreateView(LoginRequiredMixin, CreateView):
 
 class FilterUpdateView(LoginRequiredMixin, UpdateView):
 
-    model = filter
+    model = Filter
     template_name = 'admin/filter/edit.html'
     form_class = FilterForm
 
