@@ -13,24 +13,37 @@
     <div class="navbar navbar-static-top">
         <div class="navbar-inner">
             <a href="{% url 'admin_home' %}" class="brand">Eolo</a>
-            <ul class="nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        {% trans 'Manage' %}
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'admin_user_list' %}">{% trans 'Users' %}</a></li>
-                        <li class="divider"></li>
-                        <li><a href="{% url 'admin_region_list' %}">{% trans 'Regions' %}</a></li>
-                        <li><a href="{% url 'admin_measurement_list' %}">{% trans 'Measurements' %}</a></li>
-                        <li><a href="{% url 'admin_variable_list' %}">{% trans 'Variables' %}</a></li>
-                        <li><a href="{% url 'admin_station_list' %}">{% trans 'Stations' %}</a></li>
-                        <li><a href="{% url 'admin_filter_list' %}">{% trans 'Filters' %}</a></li>
-                    </ul>
-                    <li><a href="{% url 'upload_measurement_file' %}">{% trans 'Upload Measurement File' %}</a></li>
-                </li>
-            </ul>
+            {% if user.is_authenticated %}
+                <ul class="nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            {% trans 'Manage' %}
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'admin_user_list' %}">{% trans 'Users' %}</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url 'admin_region_list' %}">{% trans 'Regions' %}</a></li>
+                            <li><a href="{% url 'admin_measurement_list' %}">{% trans 'Measurements' %}</a></li>
+                            <li><a href="{% url 'admin_variable_list' %}">{% trans 'Variables' %}</a></li>
+                            <li><a href="{% url 'admin_station_list' %}">{% trans 'Stations' %}</a></li>
+                            <li><a href="{% url 'admin_filter_list' %}">{% trans 'Filters' %}</a></li>
+                        </ul>
+                        <li><a href="{% url 'upload_measurement_file' %}">{% trans 'Upload Measurement File' %}</a></li>
+                    </li>
+                </ul>
+                <ul class="nav pull-right">
+                    <li class="divider-vertical"></li>
+                    <li><a href="#">{{ user.get_full_name }}</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'My Account' %} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'logout' %}">
+                            <i class="icon-off"></i> {% trans 'Log out' %}</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            {% endif %}
         </div>
     </div>
     <section class="container">
