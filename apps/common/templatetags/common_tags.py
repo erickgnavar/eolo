@@ -43,7 +43,7 @@ def pagination_range(page_obj):
     min_value = current - variation
     max_value = current + variation
     if num_pages <= settings.PAGE_LENGTH:
-        return range(1, num_pages)
+        return range(1, num_pages + 1)
     if min_value <= 0:
         return range(1, settings.PAGE_LENGTH)
     if max_value >= num_pages:
