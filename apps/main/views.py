@@ -82,7 +82,7 @@ def prepare_data(values):
     data = {
         'length': length,
         'intervals': [],
-        'amplitude': amplitude
+        'amplitude': round(amplitude, limit_decimal)
     }
     m = min(values)
     for i in range(quantity):
@@ -137,7 +137,7 @@ def prepare_data(values):
     median += (((data['length'] / 2) - before_value) / data['intervals'][modal_class_index]['class_marker']) * float(data['amplitude'])
     print data['amplitude']
     # Median end
-    data['median'] = median
+    data['median'] = round(median, limit_decimal)
     # Mode
 
     # Mode end
@@ -154,6 +154,6 @@ def prepare_data(values):
         y = data['intervals'][modal_class_index]['fi'] - float(data['intervals'][modal_class_index + 1]['fi'])
     mode = data['intervals'][modal_class_index]['min'] + ((x / (x + y)) * float(data['amplitude']))
 
-    data['mode'] = mode
+    data['mode'] = round(mode, limit_decimal)
 
     return data

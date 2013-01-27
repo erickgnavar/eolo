@@ -31,7 +31,7 @@ def insert_measurement(content, station):
             }
             i = 3
             for var_name in variable_names:
-                variable = variables.get(code=var_name)
+                variable = variables.get(code=var_name)  # TODO add try except block
                 value = values[i]
                 params['variable'] = variable
                 i += 1
