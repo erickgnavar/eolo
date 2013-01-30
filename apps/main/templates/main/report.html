@@ -10,69 +10,85 @@
 {% endblock extrastyle %}
 {% block container %}
     <div class="page-header">
-        <h1>{% trans 'Found' %} {{ data.length }} {% trans 'measurements' %}</h1>
-        <p>{{ data.amplitude }}</p>
+        <h1>{% trans 'Found' %} {{ data.length }} {% trans 'measurements' %} | {{ variable.name }}</h1>
     </div>
+    <div>
+        <ul class="nav nav-tabs" id="myTab">
+            <li class="active">
+                <a href="#frequency_table" data-toggle="tab">{% trans 'Frequency Table' %}</a>
+            </li>
+            <li>
+                <a href="#charts" data-toggle="tab">{% trans 'Charts' %}</a>
+            </li>
+            <li>
+                <a href="#statistics" data-toggle="tab">{% trans 'Statistics' %}</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="frequency_table">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans "#" %}</th>
+                            <th>{% trans 'Interval' %}</th>
+                            <th>{% trans 'Pipes' %}</th>
+                            <th>{% trans 'Class Marker' %}</th>
+                            <th>f<span class="sub-index">i</span></th>
+                            <th>F<span class="sub-index">i</span></th>
+                            <th>h<span class="sub-index">i</span></th>
+                            <th>H<span class="sub-index">i</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for interval in data.intervals %}
+                        <tr>
+                            <td>{{ interval.index }}</td>
+                            {% if interval.index == 1 %}
+                                <td>[{{ interval.min }} : {{ interval.max }}]</td>    
+                            {% else %}
+                                <td>&lt;{{ interval.min }} : {{ interval.max }}]</td>
+                            {% endif %}
+                            <td>
+                            {{ interval.values|to_pipes }}
+                            </td>
+                            <td>{{ interval.class_marker|stringformat:'f' }}</td>
+                            <td>{{ interval.fi}}</td>
+                            <td>{{ interval.Fi }}</td>
+                            <td>{{ interval.hi }}</td>
+                            <td>{{ interval.Hi }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="charts" class="tab-pane">
+                
+            </div>
+            <div id="statistics" class="tab-pane">
+                <p>{% trans 'Average' %} {{ data.average }}</p>
+                <p>{% trans 'Median' %} {{ data.median }}</p>
+                <p>{% trans 'Mode' %} {{ data.mode }}</p>
+            </div>
+        </div>
+    </div>
+    <!--
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
-                <th>{% trans "#" %}</th>
-                <th>{% trans 'Interval' %}</th>
-                <th>{% trans 'Pipes' %}</th>
-                <th>{% trans 'Class Marker' %}</th>
-                <th>f<span class="sub-index">i</span></th>
-                <th>F<span class="sub-index">i</span></th>
-                <th>h<span class="sub-index">i</span></th>
-                <th>H<span class="sub-index">i</span></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for interval in data.intervals %}
-            <tr>
-                <td>{{ interval.index }}</td>
-                {% if interval.index == 1 %}
-                    <td>[{{ interval.min }} : {{ interval.max }}]</td>    
-                {% else %}
-                    <td>&lt;{{ interval.min }} : {{ interval.max }}]</td>
-                {% endif %}
-                <td>
-                {{ interval.values|to_pipes }}
-                </td>
-                <td>{{ interval.class_marker|stringformat:'f' }}</td>
-                <td>{{ interval.fi}}</td>
-                <td>{{ interval.Fi }}</td>
-                <td>{{ interval.hi }}</td>
-                <td>{{ interval.Hi }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <hr>
-    <div class="container">
-        <p>{% trans 'Average' %} {{ data.average }}</p>
-        <p>{% trans 'Median' %} {{ data.median }}</p>
-        <p>{% trans 'Mode' %} {{ data.mode }}</p>
-    </div>
-    <hr>
-    <table class="table table-bordered table-striped table-hover">
-        <thead>
-            <tr>
-                <th>{% trans 'Variable' %}</th>
-                <th>{% trans 'Value' %}</th>
                 <th>{% trans 'Station' %}</th>
+                <th>{% trans 'Value' %}</th>
                 <th>{% trans 'Date' %}</th>
             </tr>
         </thead>
         <tbody>
             {% for measurement in measurements %}
             <tr>
-                <td>{{ measurement.variable }}</td>
-                <td>{{ measurement.value }}</td>
                 <td>{{ measurement.station }}</td>
+                <td>{{ measurement.value }}</td>
                 <td>{{ measurement.date }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
+-->
 {% endblock container %}

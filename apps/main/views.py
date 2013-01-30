@@ -61,7 +61,8 @@ class HomeView(FormView):
             # 'mode': Stadistical.mode(values),
             # 'median': Stadistical.median(values),
             'measurements': Measurement.objects.filter(id__in=ids).order_by('date'),
-            'data': prepare_data(values)
+            'data': prepare_data(values),
+            'variable': variable
         }
         params = ('main/report.html', context, RequestContext(self.request))
         prepare_data(values)
@@ -135,7 +136,6 @@ def prepare_data(values):
         before_value = data['intervals'][modal_class_index - 1]['Fi']
 
     median += (((data['length'] / 2) - before_value) / data['intervals'][modal_class_index]['class_marker']) * float(data['amplitude'])
-    print data['amplitude']
     # Median end
     data['median'] = round(median, limit_decimal)
     # Mode
