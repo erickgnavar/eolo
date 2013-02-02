@@ -66,8 +66,17 @@ class HomeView(FormView):
             'length': len(values)
         }
         context['simulate_data'] = random_data(context['real_data'])
+        chart = []
+        for i in range(len(context['real_data']['intervals'])):
+            chart.append({
+                'index': (i + 1),
+                'class_marker': context['real_data']['intervals'][i]['class_marker'],
+                'real_value': context['real_data']['intervals'][i]['fi'],
+                'simulate_value': context['simulate_data']['intervals'][i]['fi']
+            })
+        context['chart'] = chart
+        print chart
         params = ('main/report.html', context, RequestContext(self.request))
-        # prepare_data(values)
         return render_to_response(*params)
 
 

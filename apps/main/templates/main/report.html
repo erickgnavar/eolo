@@ -97,6 +97,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <div id="chart-comparation" style="width: 900px; height: 500px;"></div>
             </div>
             <div id="charts" class="tab-pane">
                 <div id="chart-statistics" style="width: 900px; height: 500px;"></div>
@@ -174,6 +175,13 @@
                 ['P10', {{ real_data.p10 }}, {{ simulate_data.p10 }}],
             ]);
 
+            var data_comparation = google.visualization.arrayToDataTable([
+                ['Class Marker', 'Real', 'Simulated'],
+                {% for value in chart %}
+                    ['{{ value.index }}',  {{ value.real_value }}, {{ value.simulate_value }}],     
+                {% endfor %}
+            ]);
+
             var options = {
                 title: 'Stadistics Comparation',
                 hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
@@ -189,12 +197,19 @@
                 hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
             };
 
+            var options_comparation = {
+                title: 'Comparation',
+                hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
+            };
+
             var chart = new google.visualization.ColumnChart(document.getElementById('chart-statistics'));
             chart.draw(data, options);
             var chart_deciles = new google.visualization.ColumnChart(document.getElementById('chart-deciles-statistics'));
             chart_deciles.draw(data_deciles, options_deciles);
             var chart_percentiles = new google.visualization.ColumnChart(document.getElementById('chart-percentiles-statistics'));
             chart_percentiles.draw(data_percentiles, options_percentiles);
+            var chart_comparation = new google.visualization.ColumnChart(document.getElementById('chart-comparation'));
+            chart_comparation.draw(data_comparation, options_comparation);
         }
     </script>
 {% endblock bottom_script %}
