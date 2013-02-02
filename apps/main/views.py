@@ -61,11 +61,12 @@ class HomeView(FormView):
             # 'mode': Stadistical.mode(values),
             # 'median': Stadistical.median(values),
             'measurements': Measurement.objects.filter(id__in=ids).order_by('date'),
-            'data': prepare_data(values),
+            'real_data': prepare_data(values),
             'variable': variable
         }
+        context['simulate_data'] = random_data(context['real_data'])
         params = ('main/report.html', context, RequestContext(self.request))
-        prepare_data(values)
+        # prepare_data(values)
         return render_to_response(*params)
 
 
@@ -83,7 +84,9 @@ def prepare_data(values):
     data = {
         'length': length,
         'intervals': [],
-        'amplitude': round(amplitude, limit_decimal)
+        'amplitude': round(amplitude, limit_decimal),
+        'max': max(values),
+        'min': min(values)
     }
     m = min(values)
     for i in range(quantity):
@@ -120,6 +123,11 @@ def prepare_data(values):
         data['intervals'][i]['Fi'] += data['intervals'][i - 1]['Fi'] + data['intervals'][i]['fi']
         data['intervals'][i]['Hi'] += round(data['intervals'][i - 1]['Hi'] + data['intervals'][i]['hi'], limit_decimal)
 
+    data = calculate_stadistics(data, limit_decimal)
+    return data
+
+
+def calculate_stadistics(data, limit_decimal=5):
     a = 0
     modal_class_index = 0
     b = 0
@@ -142,7 +150,7 @@ def prepare_data(values):
 
     # Mode end
     # Average
-    data['average'] = round(a / length, limit_decimal)
+    data['average'] = round(a / data['length'], limit_decimal)
 
     if modal_class_index - 1 <= 0:
         x = data['intervals'][modal_class_index]['fi'] - float(data['intervals'][modal_class_index]['min'])
@@ -155,5 +163,55 @@ def prepare_data(values):
     mode = data['intervals'][modal_class_index]['min'] + ((x / (x + y)) * float(data['amplitude']))
 
     data['mode'] = round(mode, limit_decimal)
+    return data
 
+
+def random_data(real_data):
+    from random import uniform
+    values = []
+    limit_decimal = 5
+    data = {
+        'amplitude': real_data['amplitude'],
+        'intervals': []
+    }
+    for i in range(1000):
+        a = float(real_data['min'])
+        b = float(real_data['max'])
+        values.append(Decimal(uniform(a, b)))
+    data['length'] = len(values)
+
+    for i in range(len(real_data['intervals'])):
+        interval = {
+            'index': 0,
+            'min': real_data['intervals'][i]['min'],
+            'max': real_data['intervals'][i]['max'],
+            'values': []
+        }
+        data['intervals'].append(interval)
+
+    min_value = min(values)
+    for i in range(values.count(min_value)):
+        data['intervals'][0]['values'].append(min_value)
+    # insert rest data
+    for value in values:
+        for interval in data['intervals']:
+            if value > interval['min'] and value <= interval['max']:
+                interval['values'].append(value)
+
+    count = 0
+    for interval in data['intervals']:
+        count += 1
+        interval['index'] = count
+        interval['class_marker'] = (interval['max'] + interval['min']) / 2
+        interval['fi'] = len(interval['values'])
+        interval['hi'] = round(float(interval['fi']) / float(data['length']), limit_decimal)
+        interval['Fi'] = 0
+        interval['Hi'] = 0
+
+    data['intervals'][0]['Fi'] = data['intervals'][0]['fi']
+    data['intervals'][0]['Hi'] = round(data['intervals'][0]['hi'], limit_decimal)
+    for i in range(1, len(data['intervals'])):
+        data['intervals'][i]['Fi'] += data['intervals'][i - 1]['Fi'] + data['intervals'][i]['fi']
+        data['intervals'][i]['Hi'] += round(data['intervals'][i - 1]['Hi'] + data['intervals'][i]['hi'], limit_decimal)
+    data = calculate_stadistics(data, limit_decimal)
     return data

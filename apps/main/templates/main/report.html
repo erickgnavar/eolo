@@ -6,6 +6,13 @@
         .sub-index {
             vertical-align: sub;
         }
+        #chart-container {
+            width: 100%;
+        }
+        #chart-statistics {
+            height: 500px;
+            width: 900px;
+        }
     </style>
 {% endblock extrastyle %}
 {% block container %}
@@ -26,6 +33,7 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="frequency_table">
+                <h3>{% trans 'Real Values' %}</h3>
                 <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
@@ -40,7 +48,43 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for interval in data.intervals %}
+                        {% for interval in real_data.intervals %}
+                        <tr>
+                            <td>{{ interval.index }}</td>
+                            {% if interval.index == 1 %}
+                                <td>[{{ interval.min }} : {{ interval.max }}]</td>    
+                            {% else %}
+                                <td>&lt;{{ interval.min }} : {{ interval.max }}]</td>
+                            {% endif %}
+                            <td>
+                            {{ interval.values|to_pipes }}
+                            </td>
+                            <td>{{ interval.class_marker|stringformat:'f' }}</td>
+                            <td>{{ interval.fi}}</td>
+                            <td>{{ interval.Fi }}</td>
+                            <td>{{ interval.hi }}</td>
+                            <td>{{ interval.Hi }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <hr>
+                <h3>{% trans 'Simulate Values' %}</h3>
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans "#" %}</th>
+                            <th>{% trans 'Interval' %}</th>
+                            <th>{% trans 'Pipes' %}</th>
+                            <th>{% trans 'Class Marker' %}</th>
+                            <th>f<span class="sub-index">i</span></th>
+                            <th>F<span class="sub-index">i</span></th>
+                            <th>h<span class="sub-index">i</span></th>
+                            <th>H<span class="sub-index">i</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for interval in simulate_data.intervals %}
                         <tr>
                             <td>{{ interval.index }}</td>
                             {% if interval.index == 1 %}
@@ -62,7 +106,9 @@
                 </table>
             </div>
             <div id="charts" class="tab-pane">
-                
+                <div id="chart-container">
+                    <div id="chart-statistics"></div>
+                </div>
             </div>
             <div id="statistics" class="tab-pane">
                 <p>{% trans 'Average' %} {{ data.average }}</p>
@@ -92,3 +138,26 @@
     </table>
 -->
 {% endblock container %}
+{% block bottom_script %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Statistics', 'Real', 'Simulated'],
+                ['Average',  {{ real_data.average }}, {{ simulate_data.average }}],
+                ['Median', {{ real_data.median }}, {{ simulate_data.median }}],
+                ['Mode',  {{ real_data.mode }}, {{ simulate_data.mode }}],
+            ]);
+
+            var options = {
+                title: '',
+                hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}}
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('chart-statistics'));
+            chart.draw(data, options);
+        }
+    </script>
+{% endblock bottom_script %}
