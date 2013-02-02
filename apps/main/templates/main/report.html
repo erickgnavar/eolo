@@ -6,30 +6,23 @@
         .sub-index {
             vertical-align: sub;
         }
-        #chart-container {
-            width: 100%;
-        }
-        #chart-statistics {
-            height: 500px;
-            width: 900px;
-        }
     </style>
 {% endblock extrastyle %}
 {% block container %}
     <div class="page-header">
-        <h1>{% trans 'Found' %} {{ data.length }} {% trans 'measurements' %} | {{ variable.name }}</h1>
+        <h1>{% trans 'Found' %} {{ length }} {% trans 'measurements' %} | {{ variable.name }}</h1>
     </div>
     <div>
         <ul class="nav nav-tabs" id="myTab">
             <li class="active">
-                <a href="#frequency_table" data-toggle="tab">{% trans 'Frequency Table' %}</a>
+                <a href="#frequency_table" data-toggle="tab">{% trans 'Frequency Tables' %}</a>
             </li>
             <li>
                 <a href="#charts" data-toggle="tab">{% trans 'Charts' %}</a>
             </li>
-            <li>
+            <!--<li>
                 <a href="#statistics" data-toggle="tab">{% trans 'Statistics' %}</a>
-            </li>
+            </li>-->
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="frequency_table">
@@ -106,15 +99,15 @@
                 </table>
             </div>
             <div id="charts" class="tab-pane">
-                <div id="chart-container">
-                    <div id="chart-statistics"></div>
-                </div>
+                <div id="chart-statistics" style="width: 900px; height: 500px;"></div>
+                <div id="chart-deciles-statistics" style="width: 900px; height: 500px;"></div>
+                <div id="chart-percentiles-statistics" style="width: 900px; height: 500px;"></div>
             </div>
-            <div id="statistics" class="tab-pane">
+            <!--<li><div id="statistics" class="tab-pane">
                 <p>{% trans 'Average' %} {{ data.average }}</p>
                 <p>{% trans 'Median' %} {{ data.median }}</p>
                 <p>{% trans 'Mode' %} {{ data.mode }}</p>
-            </div>
+            </div>-->
         </div>
     </div>
     <!--
@@ -149,15 +142,59 @@
                 ['Average',  {{ real_data.average }}, {{ simulate_data.average }}],
                 ['Median', {{ real_data.median }}, {{ simulate_data.median }}],
                 ['Mode',  {{ real_data.mode }}, {{ simulate_data.mode }}],
+                ['Q1', {{ real_data.q1 }}, {{ simulate_data.q1 }}],
+                ['Q2', {{ real_data.q2 }}, {{ simulate_data.q2 }}],
+                ['Q3', {{ real_data.q3 }}, {{ simulate_data.q3 }}],
+            ]);
+
+            var data_deciles = google.visualization.arrayToDataTable([
+                ['Deciles', 'Real', 'Simulated'],
+                ['D1', {{ real_data.d1 }}, {{ simulate_data.d1 }}],
+                ['D2', {{ real_data.d2 }}, {{ simulate_data.d2 }}],
+                ['D3', {{ real_data.d3 }}, {{ simulate_data.d3 }}],
+                ['D4', {{ real_data.d4 }}, {{ simulate_data.d4 }}],
+                ['D5', {{ real_data.d5 }}, {{ simulate_data.d5 }}],
+                ['D6', {{ real_data.d6 }}, {{ simulate_data.d6 }}],
+                ['D7', {{ real_data.d7 }}, {{ simulate_data.d7 }}],
+                ['D8', {{ real_data.d8 }}, {{ simulate_data.d8 }}],
+                ['D9', {{ real_data.d9 }}, {{ simulate_data.d9 }}],
+            ]);
+
+            var data_percentiles = google.visualization.arrayToDataTable([
+                ['Percentiles', 'Real', 'Simulated'],
+                ['P1', {{ real_data.p1 }}, {{ simulate_data.p1 }}],
+                ['P2', {{ real_data.p2 }}, {{ simulate_data.p2 }}],
+                ['P3', {{ real_data.p3 }}, {{ simulate_data.p3 }}],
+                ['P4', {{ real_data.p4 }}, {{ simulate_data.p4 }}],
+                ['P5', {{ real_data.p5 }}, {{ simulate_data.p5 }}],
+                ['P6', {{ real_data.p6 }}, {{ simulate_data.p6 }}],
+                ['P7', {{ real_data.p7 }}, {{ simulate_data.p7 }}],
+                ['P8', {{ real_data.p8 }}, {{ simulate_data.p8 }}],
+                ['P9', {{ real_data.p9 }}, {{ simulate_data.p9 }}],
+                ['P10', {{ real_data.p10 }}, {{ simulate_data.p10 }}],
             ]);
 
             var options = {
-                title: '',
-                hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}}
+                title: 'Stadistics Comparation',
+                hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
+            };
+
+            var options_deciles = {
+                title: 'Deciles Comparation',
+                hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
+            };
+
+            var options_percentiles = {
+                title: 'Percentiles Comparation',
+                hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
             };
 
             var chart = new google.visualization.ColumnChart(document.getElementById('chart-statistics'));
             chart.draw(data, options);
+            var chart_deciles = new google.visualization.ColumnChart(document.getElementById('chart-deciles-statistics'));
+            chart_deciles.draw(data_deciles, options_deciles);
+            var chart_percentiles = new google.visualization.ColumnChart(document.getElementById('chart-percentiles-statistics'));
+            chart_percentiles.draw(data_percentiles, options_percentiles);
         }
     </script>
 {% endblock bottom_script %}

@@ -62,7 +62,8 @@ class HomeView(FormView):
             # 'median': Stadistical.median(values),
             'measurements': Measurement.objects.filter(id__in=ids).order_by('date'),
             'real_data': prepare_data(values),
-            'variable': variable
+            'variable': variable,
+            'length': len(values)
         }
         context['simulate_data'] = random_data(context['real_data'])
         params = ('main/report.html', context, RequestContext(self.request))
@@ -163,7 +164,32 @@ def calculate_stadistics(data, limit_decimal=5):
     mode = data['intervals'][modal_class_index]['min'] + ((x / (x + y)) * float(data['amplitude']))
 
     data['mode'] = round(mode, limit_decimal)
+
+    #Quartile
+    data['q1'] = quartile(data, 1, 4)
+    data['q2'] = quartile(data, 2, 4)
+    data['q3'] = quartile(data, 3, 4)
+    for i in range(1, 10):
+        data['d' + str(i)] = quartile(data, i, 10)
+    for i in range(1, 100):
+        data['p' + str(i)] = quartile(data, i, 100)
+    # End Quartile
+
     return data
+
+
+def quartile(data, pos, type):
+    q1 = (data['intervals'][len(data['intervals']) - 1]['Fi'] * pos) / type
+    print q1
+    i = 0
+    while q1 > data['intervals'][i]['Fi']:
+        i += 1
+    if i == 0:
+        qa = 0
+    else:
+        qa = data['intervals'][i - 1]['Fi']
+    q_value = data['intervals'][i]['min'] + (((q1 - qa) / data['intervals'][i]['fi']) * data['amplitude'])
+    return q_value
 
 
 def random_data(real_data):
