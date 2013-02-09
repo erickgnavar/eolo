@@ -202,17 +202,23 @@ def quartile(data, pos, type):
 
 
 def random_data(real_data):
-    from random import uniform
+    from random import random
     values = []
     limit_decimal = 5
     data = {
         'amplitude': real_data['amplitude'],
         'intervals': []
     }
-    for i in range(1000):
-        a = float(real_data['min'])
-        b = float(real_data['max'])
-        values.append(Decimal(uniform(a, b)))
+
+    for i in range(100000):
+        rand = random()
+        tmp = 0
+        for j in range(real_data['length']):
+            if rand < real_data['intervals'][j]['Hi']:
+                tmp = real_data['intervals'][j]['class_marker']
+                break
+        values.append(tmp)
+
     data['length'] = len(values)
 
     for i in range(len(real_data['intervals'])):
