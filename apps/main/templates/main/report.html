@@ -68,7 +68,7 @@
                         <tr>
                             <th>{% trans "#" %}</th>
                             <th>{% trans 'Interval' %}</th>
-                            <th>{% trans 'Pipes' %}</th>
+                            <!--<th>{% trans 'Pipes' %}</th>-->
                             <th>{% trans 'Class Marker' %}</th>
                             <th>f<span class="sub-index">i</span></th>
                             <th>F<span class="sub-index">i</span></th>
@@ -85,9 +85,9 @@
                             {% else %}
                                 <td>&lt;{{ interval.min }} : {{ interval.max }}]</td>
                             {% endif %}
-                            <td>
+                           <!--<td>
                             {{ interval.values|to_pipes }}
-                            </td>
+                            </td>-->
                             <td>{{ interval.class_marker|stringformat:'f' }}</td>
                             <td>{{ interval.fi}}</td>
                             <td>{{ interval.Fi }}</td>
@@ -97,7 +97,8 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <div id="chart-comparation" style="width: 900px; height: 500px;"></div>
+                <div id="chart-real-values" style="width: 900px; height: 500px;"></div>
+                <div id="chart-simulated-values" style="width: 900px; height: 500px;"></div>
             </div>
             <div id="charts" class="tab-pane">
                 <div id="chart-statistics" style="width: 900px; height: 500px;"></div>
@@ -175,10 +176,17 @@
                 ['P10', {{ real_data.p10 }}, {{ simulate_data.p10 }}],
             ]);
 
-            var data_comparation = google.visualization.arrayToDataTable([
-                ['Class Marker', 'Real', 'Simulated'],
-                {% for value in chart %}
-                    ['{{ value.index }}',  {{ value.real_value }}, {{ value.simulate_value }}],     
+            var data_real_values = google.visualization.arrayToDataTable([
+                ['Class Marker', 'Real'],
+                {% for interval in real_data.intervals %}
+                    ['{{ interval.index }}',  {{ interval.Fi }}],
+                {% endfor %}
+            ]);
+
+            var data_simulated_values = google.visualization.arrayToDataTable([
+                ['Class Marker', 'Simulated'],
+                {% for interval in simulate_data.intervals %}
+                    ['{{ interval.index }}',  {{ interval.Fi }}],
                 {% endfor %}
             ]);
 
@@ -197,9 +205,15 @@
                 hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
             };
 
-            var options_comparation = {
-                title: 'Comparation',
-                hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
+            var options_real_values = {
+                title: 'Real Values',
+                hAxis: {title: 'Fi', titleTextStyle: {color: 'red'}},
+            };
+
+            var options_simulated_values = {
+                title: 'Simulated Values',
+                hAxis: {title: 'Fi', titleTextStyle: {color: 'green'}},
+                colors: ['green']
             };
 
             var chart = new google.visualization.ColumnChart(document.getElementById('chart-statistics'));
@@ -208,8 +222,10 @@
             chart_deciles.draw(data_deciles, options_deciles);
             var chart_percentiles = new google.visualization.ColumnChart(document.getElementById('chart-percentiles-statistics'));
             chart_percentiles.draw(data_percentiles, options_percentiles);
-            var chart_comparation = new google.visualization.ColumnChart(document.getElementById('chart-comparation'));
-            chart_comparation.draw(data_comparation, options_comparation);
+            var chart_real_values = new google.visualization.ColumnChart(document.getElementById('chart-real-values'));
+            chart_real_values.draw(data_real_values, options_real_values);
+            var chart_simulated_values = new google.visualization.ColumnChart(document.getElementById('chart-simulated-values'));
+            chart_simulated_values.draw(data_simulated_values, options_simulated_values);
         }
     </script>
 {% endblock bottom_script %}

@@ -75,7 +75,6 @@ class HomeView(FormView):
                 'simulate_value': context['simulate_data']['intervals'][i]['fi']
             })
         context['chart'] = chart
-        print chart
         params = ('main/report.html', context, RequestContext(self.request))
         return render_to_response(*params)
 
