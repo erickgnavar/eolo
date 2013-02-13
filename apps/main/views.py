@@ -152,7 +152,7 @@ def calculate_stadistics(data, limit_decimal=5):
     else:
         before_value = data['intervals'][modal_class_index - 1]['Fi']
 
-    median += (((data['length'] / 2) - before_value) / data['intervals'][modal_class_index]['class_marker']) * float(data['amplitude'])
+    median += (((data['length'] / 2) - before_value) / data['intervals'][modal_class_index]['fi']) * float(data['amplitude'])
     # Median end
     data['median'] = round(median, limit_decimal)
     # Mode
