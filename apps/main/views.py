@@ -223,7 +223,7 @@ def random_data(real_data):
     for i in range(100000):
         rand = random()
         tmp = 0
-        for j in range(real_data['length']):
+        for j in range(len(real_data['intervals'])):
             if rand < real_data['intervals'][j]['Hi']:
                 tmp = real_data['intervals'][j]['class_marker']
                 break
