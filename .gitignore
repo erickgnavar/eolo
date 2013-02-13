@@ -5,3 +5,4 @@
 eolo/settings/local_settings.py
 deploy/*
 log/*
+.idea/
