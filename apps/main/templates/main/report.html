@@ -45,7 +45,7 @@
                         <tr>
                             <td>{{ interval.index }}</td>
                             {% if interval.index == 1 %}
-                                <td>[{{ interval.min }} : {{ interval.max }}]</td>    
+                                <td>[{{ interval.min }} : {{ interval.max }}]</td>
                             {% else %}
                                 <td>&lt;{{ interval.min }} : {{ interval.max }}]</td>
                             {% endif %}
@@ -81,7 +81,7 @@
                         <tr>
                             <td>{{ interval.index }}</td>
                             {% if interval.index == 1 %}
-                                <td>[{{ interval.min }} : {{ interval.max }}]</td>    
+                                <td>[{{ interval.min }} : {{ interval.max }}]</td>
                             {% else %}
                                 <td>&lt;{{ interval.min }} : {{ interval.max }}]</td>
                             {% endif %}
@@ -99,11 +99,12 @@
                 </table>
                 <div id="chart-real-values" style="width: 900px; height: 500px;"></div>
                 <div id="chart-simulated-values" style="width: 900px; height: 500px;"></div>
-            </div>
-            <div id="charts" class="tab-pane">
+                <div id="chart-statistics-2" style="width: 900px; height: 500px;"></div>
                 <div id="chart-statistics" style="width: 900px; height: 500px;"></div>
                 <div id="chart-deciles-statistics" style="width: 900px; height: 500px;"></div>
                 <div id="chart-percentiles-statistics" style="width: 900px; height: 500px;"></div>
+            </div>
+            <div id="charts" class="tab-pane">
             </div>
             <!--<li><div id="statistics" class="tab-pane">
                 <p>{% trans 'Average' %} {{ data.average }}</p>
@@ -149,6 +150,14 @@
                 ['Q3', {{ real_data.q3 }}, {{ simulate_data.q3 }}],
             ]);
 
+            var data_2 = google.visualization.arrayToDataTable([
+                ['Stadistics 2', 'Real', 'Simulated'],
+                ['Variance', {{ real_data.variance }}, {{ real_data.variance }}],
+                ['Standard Deviation', {{ real_data.standard_deviation }}, {{ simulate_data.standard_deviation }}],
+                ['Asymmetry Coefficient', {{ real_data.asymmetry_coefficient }}, {{ simulate_data.asymmetry_coefficient }}],
+                ['Inter Quartile Deviation', {{ real_data.inter_quartile_deviation }}, {{ simulate_data.inter_quartile_deviation }}],
+            ]);
+
             var data_deciles = google.visualization.arrayToDataTable([
                 ['Deciles', 'Real', 'Simulated'],
                 ['D1', {{ real_data.d1 }}, {{ simulate_data.d1 }}],
@@ -179,19 +188,24 @@
             var data_real_values = google.visualization.arrayToDataTable([
                 ['Class Marker', 'Real'],
                 {% for interval in real_data.intervals %}
-                    ['{{ interval.index }}',  {{ interval.Fi }}],
+                    ['{{ interval.index }}',  {{ interval.fi }}],
                 {% endfor %}
             ]);
 
             var data_simulated_values = google.visualization.arrayToDataTable([
                 ['Class Marker', 'Simulated'],
                 {% for interval in simulate_data.intervals %}
-                    ['{{ interval.index }}',  {{ interval.Fi }}],
+                    ['{{ interval.index }}',  {{ interval.fi }}],
                 {% endfor %}
             ]);
 
             var options = {
                 title: 'Stadistics Comparation',
+                hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
+            };
+
+            var options_2 = {
+                title: 'Stadistics Comparation 2',
                 hAxis: {title: 'Stadistics', titleTextStyle: {color: 'red'}},
             };
 
@@ -218,6 +232,8 @@
 
             var chart = new google.visualization.ColumnChart(document.getElementById('chart-statistics'));
             chart.draw(data, options);
+            var chart_2 = new google.visualization.ColumnChart(document.getElementById('chart-statistics-2'));
+            chart_2.draw(data_2, options_2);
             var chart_deciles = new google.visualization.ColumnChart(document.getElementById('chart-deciles-statistics'));
             chart_deciles.draw(data_deciles, options_deciles);
             var chart_percentiles = new google.visualization.ColumnChart(document.getElementById('chart-percentiles-statistics'));

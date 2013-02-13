@@ -31,24 +31,27 @@ def insert_measurement(content, station):
             }
             i = 3
             for var_name in variable_names:
-                variable = variables.get(code=var_name)  # TODO add try except block
-                value = values[i]
-                params['variable'] = variable
-                i += 1
-                if value in filters:
-                    params['value'] = None
-                else:
-                    try:
-                        value = Decimal(value)
-                        if value >= 0:
-                            params['value'] = Decimal(value)
-                        else:
-                            params['value'] = None
-                    except:
+                try:
+                    variable = variables.get(code=var_name)  # TODO add try except block
+                    value = values[i]
+                    params['variable'] = variable
+                    i += 1
+                    if value in filters:
                         params['value'] = None
-                        errors += 1
-                measurement = Measurement(**params)
-                measurements.append(measurement)
+                    else:
+                        try:
+                            value = Decimal(value)
+                            if value >= 0:
+                                params['value'] = Decimal(value)
+                            else:
+                                params['value'] = None
+                        except:
+                            params['value'] = None
+                            errors += 1
+                    measurement = Measurement(**params)
+                    measurements.append(measurement)
+                except:
+                    pass
                 if len(measurements) == 10000:
                     Measurement.objects.bulk_create(measurements)
                     print 'saved'

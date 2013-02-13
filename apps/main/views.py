@@ -1,4 +1,6 @@
+import math
 from datetime import timedelta
+from decimal import Decimal
 
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
@@ -8,7 +10,6 @@ from django.template import RequestContext
 from main.forms import ConsultForm
 from weather.models import Measurement
 # from common.util import Stadistical
-from decimal import Decimal
 
 
 class HomeView(FormView):
@@ -66,15 +67,15 @@ class HomeView(FormView):
             'length': len(values)
         }
         context['simulate_data'] = random_data(context['real_data'])
-        chart = []
-        for i in range(len(context['real_data']['intervals'])):
-            chart.append({
-                'index': (i + 1),
-                'class_marker': context['real_data']['intervals'][i]['class_marker'],
-                'real_value': context['real_data']['intervals'][i]['fi'],
-                'simulate_value': context['simulate_data']['intervals'][i]['fi']
-            })
-        context['chart'] = chart
+        # chart = []
+        # for i in range(len(context['real_data']['intervals'])):
+        #     chart.append({
+        #         'index': (i + 1),
+        #         'class_marker': context['real_data']['intervals'][i]['class_marker'],
+        #         'real_value': context['real_data']['intervals'][i]['fi'],
+        #         'simulate_value': context['simulate_data']['intervals'][i]['fi']
+        #     })
+        # context['chart'] = chart
         params = ('main/report.html', context, RequestContext(self.request))
         return render_to_response(*params)
 
@@ -155,12 +156,11 @@ def calculate_stadistics(data, limit_decimal=5):
     median += (((data['length'] / 2) - before_value) / data['intervals'][modal_class_index]['fi']) * float(data['amplitude'])
     # Median end
     data['median'] = round(median, limit_decimal)
-    # Mode
 
-    # Mode end
     # Average
     data['average'] = round(a / data['length'], limit_decimal)
 
+    # Mode
     if modal_class_index - 1 <= 0:
         x = data['intervals'][modal_class_index]['fi'] - float(data['intervals'][modal_class_index]['min'])
     else:
@@ -172,7 +172,7 @@ def calculate_stadistics(data, limit_decimal=5):
     mode = data['intervals'][modal_class_index]['min'] + ((x / (x + y)) * float(data['amplitude']))
 
     data['mode'] = round(mode, limit_decimal)
-
+    # Mode end
     #Quartile
     data['q1'] = quartile(data, 1, 4)
     data['q2'] = quartile(data, 2, 4)
@@ -183,12 +183,23 @@ def calculate_stadistics(data, limit_decimal=5):
         data['p' + str(i)] = quartile(data, i, 100)
     # End Quartile
 
+    # Variance
+    variance = 0
+    for interval in data['intervals']:
+        # variance += (interval['class_marker'] ** 2) * interval['fi']
+        variance += ((interval['class_marker'] - data['average']) ** 2) * interval['fi']
+    variance /= data['length']
+    # variance -= data['average'] ** 2
+    data['variance'] = variance
+    # End Variance
+    data['standard_deviation'] = math.sqrt(data['variance'])
+    data['asymmetry_coefficient'] = 3 * (data['average'] - data['median']) / data['standard_deviation']
+    data['inter_quartile_deviation'] = (data['q3'] - data['q1']) / 2
     return data
 
 
 def quartile(data, pos, type):
     q1 = (data['intervals'][len(data['intervals']) - 1]['Fi'] * pos) / type
-    print q1
     i = 0
     while q1 > data['intervals'][i]['Fi']:
         i += 1
