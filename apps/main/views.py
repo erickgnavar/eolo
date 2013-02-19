@@ -90,7 +90,7 @@ def prepare_data(values):
     length = len(values)
     quantity = int(round(1 + (3.3 * math.log(length))))
     amplitude = (max(values) - min(values)) / Decimal(quantity)
-    limit_decimal = 5
+    limit_decimal = 7
     data = {
         'length': length,
         'intervals': [],

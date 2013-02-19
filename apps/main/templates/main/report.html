@@ -8,6 +8,7 @@
         }
     </style>
 {% endblock extrastyle %}
+{% block title %}{% trans 'Report' %}{% endblock %}
 {% block container %}
     <div class="page-header">
         <h1>{% trans 'Found' %} {{ length }} {% trans 'measurements' %} | {{ variable.name }}</h1>
@@ -152,7 +153,7 @@
 
             var data_2 = google.visualization.arrayToDataTable([
                 ['Stadistics 2', 'Real', 'Simulated'],
-                ['Variance', {{ real_data.variance }}, {{ real_data.variance }}],
+                ['Variance', {{ real_data.variance }}, {{ simulate_data.variance }}],
                 ['Standard Deviation', {{ real_data.standard_deviation }}, {{ simulate_data.standard_deviation }}],
                 ['Asymmetry Coefficient', {{ real_data.asymmetry_coefficient }}, {{ simulate_data.asymmetry_coefficient }}],
                 ['Inter Quartile Deviation', {{ real_data.inter_quartile_deviation }}, {{ simulate_data.inter_quartile_deviation }}],
