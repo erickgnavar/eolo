@@ -6,10 +6,11 @@ from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.http import HttpResponse
 
 from main.forms import ConsultForm
 from weather.models import Measurement
-# from common.util import Stadistical
+from weather.models import Variable
 
 
 class HomeView(FormView):
@@ -83,6 +84,26 @@ class HomeView(FormView):
 class ReportView(TemplateView):
 
     template_name = 'main/report.html'
+
+
+class FullReportView(TemplateView):
+
+    template_name = 'main/full_report.html'
+
+    def get(self, request, *args, **kwargs):
+        to_excel = []
+        for variable in Variable.objects.all()[:2]:
+            measurements = Measurement.objects.exclude(value=None).filter(variable=variable)
+            values = [measurement.value for measurement in measurements]
+            values.sort()
+            data = prepare_data(values)
+            to_excel.append({
+                'variable': variable,
+                'real': data,
+                'simulate': random_data(data)
+            })
+        xls = create_excel(to_excel)
+        return xls_to_response(xls, 'resume.xls')
 
 
 def prepare_data(values):
@@ -230,6 +251,8 @@ def random_data(real_data):
         values.append(tmp)
 
     data['length'] = len(values)
+    data['max'] = max(values)
+    data['min'] = min(values)
 
     for i in range(len(real_data['intervals'])):
         interval = {
@@ -266,3 +289,55 @@ def random_data(real_data):
         data['intervals'][i]['Hi'] += round(data['intervals'][i - 1]['Hi'] + data['intervals'][i]['hi'], limit_decimal)
     data = calculate_stadistics(data, limit_decimal)
     return data
+
+
+def create_excel(data):
+    from xlwt import Workbook
+    workbook = Workbook()
+    sheet = workbook.add_sheet('test', cell_overwrite_ok=True)
+    i = 0
+    for item in data:
+        sheet.write_merge(0, 0, i + 1, i + 2, item['variable'].name)
+        sheet.write(1, i + 1, 'Real')
+        sheet.write(1, i + 2, 'Simulate')
+        i += 2
+
+    stadistics = [
+        ('Average', 'average'),
+        ('Mode', 'mode'),
+        ('Min', 'min'),
+        ('Max', 'max'),
+        ('Median', 'median'),
+        ('Q1', 'q1'),
+        ('Q2', 'q2'),
+        ('Q3', 'q3'),
+        ('Variance', 'variance'),
+        ('Standard Deviation', 'standard_deviation'),
+        ('Asymmetry Coefficient', 'asymmetry_coefficient'),
+        ('Inter Quartile Deviation', 'inter_quartile_deviation')
+    ]
+    for i in range(1, 10):
+        stadistics.append(('D' + str(i), 'd' + str(i)))
+    for i in range(1, 100):
+        stadistics.append(('P' + str(i), 'p' + str(i)))
+    i = 2
+    for statistic in stadistics:
+        sheet.write(i, 0, statistic[0])
+        i += 1
+
+    c = 1
+    for item in data:
+        j = 2
+        for stadistic in stadistics:
+            sheet.write(j, c, item['real'][stadistic[1]])
+            sheet.write(j, c + 1, item['simulate'][stadistic[1]])
+            j += 1
+        c += 2
+    return workbook
+
+
+def xls_to_response(xls, fname):
+    response = HttpResponse(mimetype="application/ms-excel")
+    response['Content-Disposition'] = 'attachment; filename=%s' % fname
+    xls.save(response)
+    return response

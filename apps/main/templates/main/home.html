@@ -12,6 +12,7 @@
         <div class="form-actions">
             <input type="submit" class="btn btn-primary" value="{% trans 'Calculate' %}" />
             <a type="button" class="btn" href="{% url 'home' %}">{% trans 'Cancel' %}</a>
+            <a class="btn btn-warning" href="{% url 'full_report' %}">{% trans 'Full report' %}</a>
         </div>
     </form>
 {% endblock container %}

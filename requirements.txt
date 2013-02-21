@@ -8,9 +8,9 @@ celery==3.0.13
 distribute==0.6.31
 django-celery==3.0.11
 django-crispy-forms==1.2.3
-git-remote-helpers==0.1.0
 honcho==0.2.0
 kombu==2.5.4
 python-dateutil==1.5
 pytz==2012j
 wsgiref==0.1.2
+xlwt==0.7.4
