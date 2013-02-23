@@ -92,7 +92,7 @@ class FullReportView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         to_excel = []
-        for variable in Variable.objects.all()[:2]:
+        for variable in Variable.objects.all():
             measurements = Measurement.objects.exclude(value=None).filter(variable=variable)
             values = [measurement.value for measurement in measurements]
             values.sort()
