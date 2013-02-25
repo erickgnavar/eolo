@@ -14,3 +14,13 @@ class ConsultForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ConsultForm, self).__init__(*args, **kwargs)
         self.fields['date'].widget.attrs['class'] = 'datepicker'
+
+
+class ResumeForm(forms.Form):
+
+    date = forms.DateField()
+    length = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        super(ResumeForm, self).__init__(*args, **kwargs)
+        self.fields['date'].widget.attrs['class'] = 'datepicker'

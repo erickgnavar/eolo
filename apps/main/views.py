@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
 
-from main.forms import ConsultForm
+from main.forms import ConsultForm, ResumeForm
 from weather.models import Measurement
 from weather.models import Variable
 
@@ -24,59 +24,13 @@ class HomeView(FormView):
         length = data['length']
         variable = data['variable']
         qs = Measurement.objects.filter(variable=variable).exclude(value=None)
-        values = []
-        ids = []
-        # values before date selected
-        for delta in range(-length, 0):
-            delta_date = date + timedelta(days=delta)
-            filters = {
-                'date__day': delta_date.day,
-                'date__month': delta_date.month,
-                'date__lte': date
-            }
-            values += [measurement.value for measurement in qs.filter(**filters)]
-            ids += [measurement.id for measurement in qs.filter(**filters)]
-        # values for date selecte before one year
-        filters = {
-            'date__day': date.day,
-            'date__month': date.month,
-            'date__lt': date + timedelta(days=-365)
-        }
-        values += [measurement.value for measurement in qs.filter(**filters)]
-        ids += [measurement.id for measurement in qs.filter(**filters)]
-        # values above date selected
-        for delta in range(1, length + 1):
-            delta_date = date + timedelta(days=delta)
-            filters = {
-                'date__day': delta_date.day,
-                'date__month': delta_date.month,
-                'date__lte': date
-            }
-            values += [measurement.value for measurement in qs.filter(**filters)]
-            ids += [measurement.id for measurement in qs.filter(**filters)]
-        values.sort()
-        ids.sort()
-        # remove
-        # print Stadistical.mode(values), Stadistical.median(values)
+        values = get_data(qs, date, length)
         context = {
-            # 'average': Stadistical.average(values),
-            # 'mode': Stadistical.mode(values),
-            # 'median': Stadistical.median(values),
-            'measurements': Measurement.objects.filter(id__in=ids).order_by('date'),
             'real_data': prepare_data(values),
             'variable': variable,
             'length': len(values)
         }
         context['simulate_data'] = random_data(context['real_data'])
-        # chart = []
-        # for i in range(len(context['real_data']['intervals'])):
-        #     chart.append({
-        #         'index': (i + 1),
-        #         'class_marker': context['real_data']['intervals'][i]['class_marker'],
-        #         'real_value': context['real_data']['intervals'][i]['fi'],
-        #         'simulate_value': context['simulate_data']['intervals'][i]['fi']
-        #     })
-        # context['chart'] = chart
         params = ('main/report.html', context, RequestContext(self.request))
         return render_to_response(*params)
 
@@ -86,16 +40,19 @@ class ReportView(TemplateView):
     template_name = 'main/report.html'
 
 
-class FullReportView(TemplateView):
+class FullReportView(FormView):
 
     template_name = 'main/full_report.html'
+    form_class = ResumeForm
 
-    def get(self, request, *args, **kwargs):
+    def form_valid(self, form):
+        data = form.cleaned_data
+        date = data['date']
+        length = data['length']
         to_excel = []
         for variable in Variable.objects.all():
-            measurements = Measurement.objects.exclude(value=None).filter(variable=variable)
-            values = [measurement.value for measurement in measurements]
-            values.sort()
+            qs = Measurement.objects.exclude(value=None).filter(variable=variable)
+            values = get_data(qs, date, length)
             data = prepare_data(values)
             to_excel.append({
                 'variable': variable,
@@ -104,6 +61,37 @@ class FullReportView(TemplateView):
             })
         xls = create_excel(to_excel)
         return xls_to_response(xls, 'resume.xls')
+
+
+def get_data(qs, date, length):
+    values = []
+    # values before date selected
+    for delta in range(-length, 0):
+        delta_date = date + timedelta(days=delta)
+        filters = {
+            'date__day': delta_date.day,
+            'date__month': delta_date.month,
+            'date__lte': date
+        }
+        values += [measurement.value for measurement in qs.filter(**filters)]
+        # values for date selecte before one year
+    filters = {
+        'date__day': date.day,
+        'date__month': date.month,
+        'date__lt': date + timedelta(days=-365)
+    }
+    values += [measurement.value for measurement in qs.filter(**filters)]
+    # values above date selected
+    for delta in range(1, length + 1):
+        delta_date = date + timedelta(days=delta)
+        filters = {
+            'date__day': delta_date.day,
+            'date__month': delta_date.month,
+            'date__lte': date
+        }
+        values += [measurement.value for measurement in qs.filter(**filters)]
+    values.sort()
+    return values
 
 
 def prepare_data(values):

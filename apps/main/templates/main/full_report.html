@@ -1,9 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-full
-</body>
-</html>
+{% extends 'main/home.html' %}
+{% load i18n %}
+{% block container %}
+    {% load crispy_forms_tags %}
+    <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="{% trans 'Generate Resume' %}" />
+            <a type="button" class="btn" href="{% url 'home' %}">{% trans 'Cancel' %}</a>
+        </div>
+    </form>
+{% endblock container %}
