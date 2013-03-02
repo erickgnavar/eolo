@@ -51,7 +51,13 @@ def insert_measurement(content, station):
                             params['value'] = None
                             errors += 1
                     measurement = Measurement(**params)
-                    measurements.append(measurement)
+                    flag = True
+                    for m in measurements:
+                        if measurement.value != m.value and measurement.date != m.date and measurement.variable != m.variable:
+                            try:
+                                Measurement.objects.get(date=measurement.date, variable=measurement.variable, value=measurement.value)
+                            except:
+                                measurements.append(measurement)
                 except:
                     pass
                 if len(measurements) == 10000:

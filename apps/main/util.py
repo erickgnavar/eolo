@@ -233,6 +233,7 @@ def create_excel(data):
         i += 2
 
     stadistics = [
+        ('N', 'length'),
         ('Average', 'average'),
         ('Mode', 'mode'),
         ('Min', 'min'),
@@ -245,6 +246,7 @@ def create_excel(data):
         ('Standard Deviation', 'standard_deviation'),
         ('Asymmetry Coefficient', 'asymmetry_coefficient'),
         ('Inter Quartile Deviation', 'inter_quartile_deviation')
+
     ]
     for i in range(1, 10):
         stadistics.append(('D' + str(i), 'd' + str(i)))

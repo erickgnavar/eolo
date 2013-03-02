@@ -31,6 +31,7 @@ class Measurement(models.Model):
 
     class Meta:
         app_label = 'weather'
+        unique_together = ('date', 'station', 'value')
 
     def __unicode__(self):
         return str(self.variable) + ' ' + str(self.value)
