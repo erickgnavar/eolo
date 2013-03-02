@@ -20,6 +20,7 @@ class ResumeForm(forms.Form):
 
     date = forms.DateField()
     length = forms.IntegerField()
+    email = forms.EmailField()
 
     def __init__(self, *args, **kwargs):
         super(ResumeForm, self).__init__(*args, **kwargs)

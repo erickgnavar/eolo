@@ -3,7 +3,9 @@ from decimal import Decimal
 import time
 
 from weather.models import Variable, Measurement, Filter
-from celery.decorators import task
+from celery.task import task
+from common.mail import Email
+from main.util import prepare_data, get_data, random_data, create_excel
 
 
 @task(name='insert_data')
@@ -78,3 +80,31 @@ def validate_data():
             measurement.delete()
         print 'variable %s done' % variable
     print 'Validate done!'
+
+
+@task(name='generate_report')
+def generate_report(*args, **kwargs):
+    to_excel = []
+    date = kwargs['date']
+    length = kwargs['length']
+    email = kwargs['email']
+    for variable in Variable.objects.all():
+        qs = Measurement.objects.exclude(value=None).filter(variable=variable)
+        values = get_data(qs, date, length)
+        data = prepare_data(values)
+        to_excel.append({
+            'variable': variable,
+            'real': data,
+            'simulate': random_data(data)
+        })
+    xls = create_excel(to_excel)
+    path = 'resume.xls'
+    xls.save(path)
+    print 'Email sent to %s' % kwargs['email']
+    email_data = {
+        'email': email,
+        'subject': 'Resume for date: %s' % date,
+        'body': '',
+        'path': path
+    }
+    Email.send_email_attach(**email_data)
